@@ -8,7 +8,7 @@ with open("adult-all.data", "rb") as csvfile:
 	feature_names = ["age", "workingclass", "fnlwgt", 
 	"education", "education-num", "marital-status", "occupation", 
 	"relationship", "race", "sex", "capital-gain", "capital-loss", "hours-per-week", "native-country"]
-	#print feature_names
+	original_feature_names = feature_names[:]
 
 	#Load dataset, and target classes
 	train_X, train_y = [], []
@@ -20,13 +20,13 @@ with open("adult-all.data", "rb") as csvfile:
 	train_y = np.array(train_y)
 
 print "number of instances: ", len(train_X)
-#print "Features and target example: ", train_X[10], train_y[10]
-#Lets transform the categorical classes
+
+
+#Lets transform the categorical classes with One hot encoding
+#Get rid of the ? later...
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
-
-
 categorical_columns = [1, 3, 5, 6, 7, 8, 9, 13]
-#categorical_columns = [9]
+
 for column in categorical_columns:
 	enc = LabelEncoder()
 	label_encoder = enc.fit(train_X[:, column])
@@ -41,8 +41,15 @@ for column in categorical_columns:
 	
 	for new_feat in label_encoder.classes_:
 		feature_names.append(new_feat)
-	del feature_names[column]
 
+print 
+for column in categorical_columns:
+	print original_feature_names[column]
+
+	#print original_feature_names[column + 1]
+	feature_names.remove(original_feature_names[column])
+
+#deleting the old categorical columns
 train_X = np.delete(train_X, [categorical_columns], 1)
 enc = LabelEncoder()
 label_encoder = enc.fit(train_y)
@@ -77,3 +84,13 @@ def measure_performance(X, y, clf, show_accuracy=True,
 		print metrics.confusion_matrix(y, y_pred), "\n"
 
 measure_performance(X_train, y_train, clf, True, True, True)
+
+#Tree Visualization
+import pydot,StringIO
+doc_data = StringIO.StringIO()
+tree.export_graphviz(clf, out_file=doc_data,
+	feature_names = feature_names)
+graph = pydot.graph_from_dot_data(doc_data.getvalue())
+graph.write_png("adult.png")
+from IPython.core.display import Image
+Image(filename="adult.png")
