@@ -83,7 +83,7 @@ def measure_performance(X, y, clf, show_accuracy=True,
 		print "Confusion Matrix"
 		print metrics.confusion_matrix(y, y_pred), "\n"
 
-measure_performance(X_train, y_train, clf, True, True, True)
+measure_performance(X_test, y_test, clf, True, True, True)
 
 #Tree Visualization
 import pydot,StringIO
@@ -94,3 +94,19 @@ graph = pydot.graph_from_dot_data(doc_data.getvalue())
 graph.write_png("adult.png")
 from IPython.core.display import Image
 Image(filename="adult.png")
+
+print "Training Random Forest"
+#Trying random forest
+from sklearn.ensemble import RandomForestClassifier
+model = RandomForestClassifier(n_estimators = 1)
+clf_rand = model.fit(X_train, y_train)
+#predict_rand = model.predict(X_test)
+
+print "Feature / Importance"
+for i in range(len(model.feature_importances_)):
+	print "%s => %f" % (feature_names[i], model.feature_importances_[i])
+
+#print model.feature_importances_
+#print predict_rand
+measure_performance(X_test, y_test, clf_rand, True, True, True)
+
