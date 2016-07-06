@@ -98,7 +98,7 @@ Image(filename="adult.png")
 print "Training Random Forest"
 #Trying random forest
 from sklearn.ensemble import RandomForestClassifier
-model = RandomForestClassifier(n_estimators = 1)
+model = RandomForestClassifier(n_estimators = 5)
 clf_rand = model.fit(X_train, y_train)
 #predict_rand = model.predict(X_test)
 
